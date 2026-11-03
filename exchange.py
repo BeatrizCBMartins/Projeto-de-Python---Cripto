@@ -1,11 +1,9 @@
-
-arquivo = "extrato.txt"
+import datetime, os
+extrato = "extrato.txt"
 cpf = "12345678910"
 senha = "123456"
-reais = 0
-bitcoin = 0
-ethereum = 0
-ripple = 0
+
+
 
 def login():
     while True:
@@ -37,7 +35,8 @@ def login():
         
             
 def exibeMenu():
-    print("Bem vindo ao menu! \nDigite a opção desejada! \n")
+    print("\n------------------------------------------------")
+    print("\nBem vindo ao menu! \nDigite a opção desejada! \n")
     print("1 - Consultar saldo")
     print("2 - Consultar extrato")
     print("3 - Depositar")
@@ -46,6 +45,7 @@ def exibeMenu():
     print("6 - Vender criptomoedas")
     print("7 - Atualizar cotação")
     print("8 - Sair")
+    print("\n------------------------------------------------")
 
 def processaMenu(menu):
     if menu == 1:
@@ -107,7 +107,86 @@ def consultarSaldo():
     print(f"Ripple: {ripple}")
     print("\n------------------------------------------------")
 
+def depositar():
+    global reais
+    print("\n------------------------------------------------")
+    print(f"Saldo atual (Reais): R$ {reais}")
+    deposito = float(input("Digite o valor do depósito em R$: "))
+    reais += deposito
+    print(f"Saldo atual após o depósito (Reais): R$ {reais}")
 
+    salvar(
+        tipo = "+",
+        valor = deposito,
+        moeda = "REAL",
+        cotacao = 0.00,
+        taxa = 0.00,
+        reais = reais,
+        bitcoin = bitcoin,
+        ethereum = ethereum,
+        ripple = ripple
+    )
+
+    dep = input("Deseja fazer mais um depósito? ")
+    dep = dep.lower()
+    if dep == "sim":
+        return depositar()
+    elif dep == "não" or dep == "nao":
+        return False
+    else:
+        print("Palavra inválida!")
+        return False
+
+def sacar():
+    global reais
+    print("\n------------------------------------------------")
+    print(f"Saldo atual (Reais): R$ {reais}")
+    saque = float(input("Digite o valor do saque em R$: "))
+    if saque <= reais:
+        reais -= saque
+        print(f"Saldo atual após o saque (Reais): R$ {reais}")
+
+    else:
+        print("O valor do saque ultrapassa o do saldo!")
+        return
+
+    salvar(
+            tipo = "-",
+            valor = saque,
+            moeda = "REAL",
+            cotacao = 0.00,
+            taxa = 0.00,
+            reais = reais,
+            bitcoin = bitcoin,
+            ethereum = ethereum,
+            ripple = ripple
+        )
+
+    sac = input("Deseja fazer mais um saque? ")
+    sac = sac.lower()
+    if sac == "sim":
+        return sacar()
+    elif sac == "não" or sac == "nao":
+        return False
+    else:
+        print("Palavra inválida!")
+        return False
+
+def salvar(tipo, valor, moeda, cotacao, taxa, reais, bitcoin, ethereum, ripple):
+    data = datetime.now().strftime("%d-%m-%Y %H:%M")
+
+    with open(extrato, "a") as arquivo:
+        arquivo.write(f"{data} {tipo}{valor:.2f} {moeda} CT: {cotacao:.2f}     TX: {taxa:.2f} REAL: {reais:.2f} BTC: {bitcoin:.2f} ETH: {ethereum:.2f} XRP: {ripple:.2f} \n")
+    
+def carregar():
+    global reais
+    if not os.path.exists(extrato):
+        return
+    with open(extrato, "r") as arquivo:
+        for linha in arquivo:
+            tipo, valor, moeda, cotacao, taxa, reais, bitcoin, ethereum, ripple = linha.strip()
+            reais = reais
+        print(reais)
     
     
   
@@ -116,7 +195,7 @@ def consultarSaldo():
 
 
 
-
+carregar()
 login()
 
 
