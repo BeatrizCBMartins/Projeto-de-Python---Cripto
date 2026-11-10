@@ -183,30 +183,55 @@ def salvar(tipo, valor, moeda, cotacao, taxa, bitcoin, ethereum, ripple):
 
     if not os.path.exists(extrato):
             return
-    with open(extrato, "a") as arquivo:
-        arquivo.write(f"{data} {tipo}{valor:.2f} {moeda} CT: {cotacao:.2f}     TX: {taxa:.2f} REAL: {armazenar_reais():.2f} BTC: {bitcoin:.2f} ETH: {ethereum:.2f} XRP: {ripple:.2f} \n")
 
-def armazenar_reais ():
-    saldo_reais = 0
+    saldo_anterior = armazenar_reais()
+
+    if tipo == "+":
+        if moeda != "REAL":
+            valor_taxa = (valor * float(taxa))
+            saldo_att = saldo_anterior - (valor + valor_taxa)
+
+        else:
+            saldo_att = saldo_anterior + valor
+
+    elif tipo == "-":
+        saldo_att = saldo_anterior - valor
+
+    with open(extrato, "a") as arquivo:
+        arquivo.write(f"{data} {tipo}{valor:.2f} {moeda} CT: {cotacao:.2f}     TX: {taxa:.2f} REAL: {saldo_att:.2f} BTC: {bitcoin} ETH: {ethereum:.2f} XRP: {ripple:.2f} \n")
+
+
+def armazenar_reais():
+
 
     if not os.path.exists(extrato):
                 return
     with open(extrato, "r") as arquivo:
+            saldo_att = 0
+
             for linha in arquivo:
                 if not linha.strip():
                     continue
                 linha_d = linha.split()
                 valor = linha_d[2]
                 moeda = linha_d[3]
+                taxa = linha_d[7]
+        
 
-                if moeda == "REAL":
+                if moeda in ["REAL", "BTC", "ETH", "XRP"]:
                     if valor.find("+") == 0:
-                        saldo_reais += float(valor.replace("+", ""))
+                        if moeda != "REAL":
+                            valor = float(valor.replace("+", ""))
+                            valor_taxa = (valor * float(taxa))
+                            saldo_att = saldo_att - (valor + valor_taxa)
+
+                        else:
+                            saldo_att = saldo_att + float(valor.replace("+", ""))
 
                     elif valor.find("-") == 0:
-                        saldo_reais += float(valor)
+                        saldo_att += float(valor)
                     
-    return saldo_reais
+    return saldo_att
 
 def consultarExtrato():
     print("Nome: Beatriz Cristina Braz Martins \nCPF: 123.456.789-10 \n")
@@ -249,17 +274,52 @@ def attCotacao():
     salvarCot(precoBit, precoEt, precoRip)
 
     print("Cotação atual: ")
-    print(f"Bitcoin: {precoBit:.2f}")
-    print(f"Ethereum: {precoEt:.2f}")
-    print(f"Ripple: {precoRip:.2f}")
+    print(f"Bitcoin: R$ {precoBit:.2f}")
+    print(f"Ethereum: R$ {precoEt:.2f}")
+    print(f"Ripple: R$ {precoRip:.2f}")
+
 
 
 def comprarCripto():
     global precoBit, precoEt, precoRip
+    
 
     senha_def()
+    print("Cotações das Criptomoedas: ")
+    print(f"Bitcoin: R$ {precoBit:.2f}")
+    print(f"Ethereum: R$ {precoEt:.2f}")
+    print(f"Ripple: R$ {precoRip:.2f} \n")
 
-    print(precoBit)
+    print("Qual das Criptomoedas gostaria de comprar? \n1 - Bitcoin \n2 - Ethereum \n3 - Ripple \n4 - Sair")
+    compra = int(input())
+
+    if compra == 1:
+        qntd = float(input("Qual a quantidade em reais que gostaria de comprar? \nR$ "))
+        saldo_atual = armazenar_reais()
+        valor_taxa = qntd * 0.02
+        qntd_total = qntd + valor_taxa
+        if qntd_total <= saldo_atual:
+            bitcoin = qntd / precoBit
+            salvar(
+                                tipo = "+",
+                                valor = qntd,
+                                moeda = "BTC",
+                                cotacao = precoBit,
+                                taxa = 0.02,
+                                bitcoin = bitcoin,
+                                ethereum = ethereum,
+                                ripple = ripple
+                    )
+            print(f"Saldo atual após o saque (Reais): R$ {armazenar_reais()}")
+            
+    
+            print(f"Você comprou {bitcoin} de Bitcoin!")
+
+        else:
+            print("Saldo insuficiente para a compra! \nDeposite mais reais para comprar.")
+
+
+    
 
 
 
