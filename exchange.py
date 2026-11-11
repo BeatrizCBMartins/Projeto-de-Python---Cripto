@@ -440,7 +440,7 @@ def comprarCripto():
             
             print(f"Saldo atual após a compra (Reais): R$ {armazenar_reais():.2f}")
             
-            print(f"\nVocê comprou {bitcoin:.6f } bitcoins!")
+            print(f"\nVocê comprou {bitcoin:.6f} bitcoins!")
 
         else:
             print("Saldo insuficiente para a compra! \nDeposite mais reais para comprar.")
