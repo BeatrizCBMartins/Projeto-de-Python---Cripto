@@ -14,12 +14,15 @@ ripple = 0
 def login():
     while True:
         cpf_login = input("Digite o seu CPF: ")
+        
         if cpf_login.isdigit() and len(cpf_login) == 11:
             if cpf_login == cpf:
                 while True:
                     senha_login = input("Digite sua senha: ")
+
                     if senha_login.isdigit() and len(senha_login) == 6:
                         if senha_login == senha:
+
                             print("Login aceito! \nRedirecionando para o menu... \n")
                             while True:
                                 exibeMenu()
@@ -29,13 +32,13 @@ def login():
                             return False
                             
                         else:
-                            print("Senha incorreta!")
+                            print("\nSenha incorreta!")
                     
                     else:
                         print("Por favor, insira a senha com 6 dígitos e somente com números!")           
                 
             else:
-                print("CPF incorreto!")
+                print("\nCPF incorreto!")
         else:
             print("Por favor, insira o CPF com 11 dígitos e somente com números!")
         
@@ -87,25 +90,29 @@ def processaMenu(menu):
         print("Obrigado e até mais!")
         return False
 
-    return False
+    else:
+        print("Valor inválido!")
+        return True
+
 
 def senha_def():
     while True:
         senha_login = input("Digite sua senha: ")
+
         if senha_login.isdigit() and len(senha_login) == 6:
             if senha_login == senha:
-                print("Senha aceita! \nCarregando... \n")
+                print("\nSenha aceita! \nCarregando... \n")
                 return False
 
             else:
-                print("Senha incorreta!")
+                print("\nSenha incorreta!")
                             
         else:
             print("Por favor, insira a senha com 6 dígitos e somente com números!")
 
 def consultarSaldo():
     print("\n------------------------------------------------")
-    print("Nome: Beatriz Martins")
+    print("Nome: Beatriz Cristina Braz Martins")
     print("CPF: 123.456.789-10 \n")
     print(f"Reais: {armazenar_reais():.2f}")
     print(f"Bitcoin: {armazenar_bit():.6f}")
@@ -115,8 +122,10 @@ def consultarSaldo():
 
 def depositar():
     global reais
-    print("\n------------------------------------------------")
-    print(f"Saldo atual (Reais): R$ {armazenar_reais()}")
+
+    print("\n------------------------------------------------\n")
+
+    print(f"Saldo atual (Reais): R$ {armazenar_reais()}\n")
     deposito = float(input("Digite o valor do depósito em R$: "))
     reais += deposito
     salvar(
@@ -129,14 +138,19 @@ def depositar():
             ethereum = ethereum,
             ripple = ripple
         )
-    print(f"Saldo atual após o depósito (Reais): R$ {armazenar_reais()}")
+    print(f"\nSaldo atual após o depósito (Reais): R$ {armazenar_reais()}")
+    print("-" * 50)
+
     return
 
 def sacar():
     global reais
-    print("\n------------------------------------------------")
-    print(f"Saldo atual (Reais): R$ {armazenar_reais()}")
+
+    print("\n------------------------------------------------\n")
+
+    print(f"Saldo atual (Reais): R$ {armazenar_reais()}\n")
     saque = float(input("Digite o valor do saque em R$: "))
+
     if saque <= armazenar_reais():
         reais -= saque
         salvar(
@@ -149,7 +163,8 @@ def sacar():
                     ethereum = ethereum,
                     ripple = ripple
         )
-        print(f"Saldo atual após o saque (Reais): R$ {armazenar_reais()}")
+        print(f"\nSaldo atual após o saque (Reais): R$ {armazenar_reais()}")
+        print("-" * 50)
 
     else:
         print("O valor do saque ultrapassa o do saldo!")
@@ -160,9 +175,6 @@ def sacar():
 def salvar(tipo, valor, moeda, cotacao, taxa, bitcoin, ethereum, ripple):
     valor = round(valor, 2)
     data = datetime.datetime.now().strftime("%d-%m-%Y %H:%M")
-
-    if not os.path.exists(extrato):
-            return
 
     saldo_anterior = armazenar_reais()
     saldo_bit = armazenar_bit()
@@ -208,7 +220,8 @@ def armazenar_bit():
     global precoBit
 
     if not os.path.exists(extrato):
-        return
+        return 0.0
+    
     with open(extrato, "r") as arquivo:
         saldo_bit = 0
     
@@ -237,7 +250,8 @@ def armazenar_eth():
     global precoEt
 
     if not os.path.exists(extrato):
-        return
+        return 0.0
+    
     with open(extrato, "r") as arquivo:
         saldo_eth = 0
     
@@ -266,7 +280,8 @@ def armazenar_xrp():
     global precoRip
 
     if not os.path.exists(extrato):
-        return
+        return 0.0
+    
     with open(extrato, "r") as arquivo:
         saldo_xrp = 0
     
@@ -295,7 +310,8 @@ def armazenar_xrp():
 def armazenar_reais():
 
     if not os.path.exists(extrato):
-        return
+        return 0.0
+    
     with open(extrato, "r") as arquivo:
         saldo_att = 0
 
@@ -330,10 +346,20 @@ def armazenar_reais():
     return round(saldo_att, 2)
 
 def consultarExtrato():
-    print("Nome: Beatriz Cristina Braz Martins \nCPF: 123.456.789-10 \n")
+    senha_def()
+
+    print("\n" + "-" * 50)
+    print("\nNome: Beatriz Cristina Braz Martins \nCPF: 123.456.789-10 \n")
+    if not os.path.exists(extrato):
+        print("Nenhuma operação registrada ainda.")
+        print("\n" + "-" * 50)
+        return
+
     with open(extrato, "r") as arquivo:
         for linha in arquivo.readlines():
-            print(linha)
+            print(linha, end="")
+
+    print("\n" + "-" * 50)
 
 
 def aleatorio(valor):
@@ -342,10 +368,10 @@ def aleatorio(valor):
     return valor_novo
 
 def salvarCot (bit, eth, rip):
-        with open(cotacoes, "w") as arquivo:
-            arquivo.write(f"{bit}\n")
-            arquivo.write(f"{eth}\n")
-            arquivo.write(f"{rip}")
+    with open(cotacoes, "w") as arquivo:
+        arquivo.write(f"{bit}\n")
+        arquivo.write(f"{eth}\n")
+        arquivo.write(f"{rip}")
 
 def carregarCot():
     if not os.path.exists(cotacoes):
@@ -356,6 +382,7 @@ def carregarCot():
         bit = float(linhas[0].strip())
         eth = float(linhas[1].strip())
         rip = float(linhas[2].strip())
+
         return bit, eth, rip
 
 precoBit, precoEt, precoRip = carregarCot()
@@ -369,24 +396,26 @@ def attCotacao():
 
     salvarCot(precoBit, precoEt, precoRip)
 
-    print("Cotação atual: ")
+    print("\n" + "-" * 50)
+    print("Cotação atual: \n")
     print(f"Bitcoin: R$ {precoBit:.2f}")
     print(f"Ethereum: R$ {precoEt:.2f}")
     print(f"Ripple: R$ {precoRip:.2f}")
-
+    print("-" * 50)
 
 
 def comprarCripto():
     global precoBit, precoEt, precoRip
     
-
     senha_def()
-    print("Cotações das Criptomoedas: ")
+
+    print("\n" + "-" * 50)
+    print("Cotações das Criptomoedas: \n")
     print(f"Bitcoin: R$ {precoBit:.2f}")
     print(f"Ethereum: R$ {precoEt:.2f}")
     print(f"Ripple: R$ {precoRip:.2f} \n")
 
-    print("Qual das Criptomoedas gostaria de comprar? \n1 - Bitcoin \n2 - Ethereum \n3 - Ripple \n4 - Sair")
+    print("Qual das Criptomoedas gostaria de comprar? \n1 - Bitcoin \n2 - Ethereum \n3 - Ripple \n4 - Sair\n")
     compra = int(input())
 
     if compra == 1:
@@ -394,8 +423,10 @@ def comprarCripto():
         saldo_atual = armazenar_reais()
         valor_taxa = qntd * 0.02
         qntd_total = qntd + valor_taxa
+
         if qntd_total <= saldo_atual:
             bitcoin = qntd / precoBit
+
             salvar(
                                 tipo = "+",
                                 valor = qntd,
@@ -406,10 +437,10 @@ def comprarCripto():
                                 ethereum = armazenar_eth(),
                                 ripple = armazenar_xrp()
                     )
+            
             print(f"Saldo atual após a compra (Reais): R$ {armazenar_reais():.2f}")
             
-    
-            print(f"Você comprou {bitcoin} de Bitcoin!")
+            print(f"\nVocê comprou {bitcoin:.6f } bitcoins!")
 
         else:
             print("Saldo insuficiente para a compra! \nDeposite mais reais para comprar.")
@@ -420,8 +451,10 @@ def comprarCripto():
         saldo_atual = armazenar_reais()
         valor_taxa = qntd * 0.01
         qntd_total = qntd + valor_taxa
+
         if qntd_total <= saldo_atual:
             ethereum = qntd / precoEt
+
             salvar(
                     tipo = "+",
                     valor = qntd,
@@ -432,9 +465,10 @@ def comprarCripto():
                     ethereum = ethereum,
                     ripple = armazenar_xrp()
             )
+
             print(f"Saldo atual após a compra (Reais): R$ {armazenar_reais():.2f}")
                 
-            print(f"Você comprou {ethereum} de Ethereum!")
+            print(f"\nVocê comprou {ethereum:.6f} ethereums!")
 
         else:
             print("Saldo insuficiente para a compra! \nDeposite mais reais para comprar.")
@@ -445,8 +479,10 @@ def comprarCripto():
         saldo_atual = armazenar_reais()
         valor_taxa = qntd * 0.01
         qntd_total = qntd + valor_taxa
+
         if qntd_total <= saldo_atual:
             ripple = qntd / precoRip
+
             salvar(
                     tipo = "+",
                     valor = qntd,
@@ -457,9 +493,10 @@ def comprarCripto():
                     ethereum = armazenar_eth(),
                     ripple = ripple
             )
+
             print(f"Saldo atual após a compra (Reais): R$ {armazenar_reais():.2f}")
                 
-            print(f"Você comprou {ripple} de Ripple!")
+            print(f"\nVocê comprou {ripple:.6f} ripples!")
 
         else:
             print("Saldo insuficiente para a compra! \nDeposite mais reais para comprar.")
@@ -476,12 +513,13 @@ def venderCripto():
 
     senha_def()
 
-    print("Cotações das Criptomoedas: ")
+    print("\n" + "-" * 50)
+    print("Cotações das Criptomoedas: \n")
     print(f"Bitcoin: R$ {precoBit:.2f}")
     print(f"Ethereum: R$ {precoEt:.2f}")
     print(f"Ripple: R$ {precoRip:.2f} \n")
 
-    print("Qual das Criptomoedas gostaria de vender? \n1 - Bitcoin \n2 - Ethereum \n3 - Ripple \n4 - Sair")
+    print("Qual das Criptomoedas gostaria de vender? \n1 - Bitcoin \n2 - Ethereum \n3 - Ripple \n4 - Sair\n")
     venda = int(input())
 
     if venda == 1:
@@ -505,14 +543,14 @@ def venderCripto():
                                 ripple = armazenar_xrp()
                     )            
     
-            print(f"Você vendeu {qntd:.6f} de Bitcoin!")
+            print(f"\nVocê vendeu {qntd:.6f} de bitcoins!")
 
         else:
             print("Saldo insuficiente para a venda!")
 
 
     if venda == 2:
-        print(f"Você possui {armazenar_eth():.6f} de Bitcoin \n")
+        print(f"Você possui {armazenar_eth():.6f} de Ethereum \n")
         qntd = float(input("Qual a quantidade que gostaria de vender? "))
         saldo_eth = armazenar_eth()
 
@@ -532,7 +570,7 @@ def venderCripto():
                                 ripple = armazenar_xrp()
                     )            
     
-            print(f"Você vendeu {qntd:.6f} de Ethereum!")
+            print(f"\nVocê vendeu {qntd:.6f} de ethereums!")
 
         else:
             print("Saldo insuficiente para a venda!")
@@ -559,7 +597,7 @@ def venderCripto():
                                 ripple = ripple
                     )            
     
-            print(f"Você vendeu {qntd:.6f} de Ripple!")
+            print(f"\nVocê vendeu {qntd:.6f} de ripples!")
 
         else:
             print("Saldo insuficiente para a venda!")
@@ -571,9 +609,4 @@ def venderCripto():
         return
 
 
-
-
 login()
-
-
-
